@@ -23,7 +23,7 @@ async fn subscribe_returns_200_for_a_valid_form_data() {
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
 
     let response = client
-        .post(format!("{address}/subscribe"))
+        .post(format!("{address}/subscriptions"))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(body)
         .send()
@@ -45,7 +45,7 @@ async fn returns_400_when_data_is_missing() {
 
     for (invalid_body, error_message) in test_cases {
         let response = client
-            .post(format!("{address}/subscribe"))
+            .post(format!("{address}/subscriptions"))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(invalid_body)
             .send()
@@ -64,7 +64,7 @@ async fn returns_400_when_data_is_missing() {
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let server = production::run(listener).expect("Failed to bind address");
+    let server = production::startup::run(listener).expect("Failed to bind address");
     let _ = tokio::spawn(server);
     format!("http://127.0.0.1:{port}")
 }
