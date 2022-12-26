@@ -25,7 +25,7 @@ pub async fn subscriptions(form: web::Form<FormData>, pool: web::Data<PgPool>) -
     .await;
 
     match query {
-        Ok(_) => HttpResponse::Ok().finish(),
+        Ok(_) => HttpResponse::Created().finish(),
         Err(e) => {
             println!("Failed to execute query: {}", e);
             HttpResponse::InternalServerError().finish()
