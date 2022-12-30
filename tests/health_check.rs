@@ -117,6 +117,34 @@ async fn spawn_app() -> TestApp {
     }
 }
 
+#[tokio::test]
+async fn subscribe_returns_400_when_fields_are_present_but_empty() {
+    let app = spawn_app().await;
+    let client = reqwest::Client::new();
+    let test_cases = vec![
+        ("name=&email=random@test.em", "empty name"),
+        ("name=randomowe&email=", "empty email"),
+        ("name=Ursula&email=not-an-email", "invalid email"),
+    ];
+
+    for (body, description) in test_cases {
+        let response = client
+            .post(format!("{}/subscriptions", &app.address))
+            .body(body)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .send()
+            .await
+            .expect("Failed to execute request");
+
+        assert_eq!(
+            response.status(),
+            400,
+            "The API did not return 400 BAD REQUEST when the payload was {}",
+            description
+        )
+    }
+}
+
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let mut connection =
         PgConnection::connect(&config.connection_string_without_db().expose_secret())

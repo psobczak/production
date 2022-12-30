@@ -1,7 +1,7 @@
 use production::{configuration, startup};
+use secrecy::ExposeSecret;
 use sqlx::PgPool;
 use std::net::TcpListener;
-use secrecy::ExposeSecret;
 
 use production::telemetry;
 
@@ -11,7 +11,7 @@ async fn main() -> std::io::Result<()> {
     telemetry::init_subscriber(subscriber);
 
     let config = configuration::get_configuration().expect("Failed to read configuration file");
-    let connection = PgPool::connect(&config.database.connection_string().expose_secret())
+    let connection = PgPool::connect(config.database.connection_string().expose_secret())
         .await
         .expect("Failed to connect to Postgres");
     let address = format!("127.0.0.1:{}", config.application_port);
