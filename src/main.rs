@@ -1,5 +1,5 @@
 use secrecy::ExposeSecret;
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use sqlx::postgres::PgPoolOptions;
 use std::{net::TcpListener, time::Duration};
 
 use production::{configuration, email_client::EmailClient, startup, telemetry};
