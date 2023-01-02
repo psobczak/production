@@ -5,6 +5,9 @@ database:
   username: "postgres"
   password: "password"
   database_name: "newsletter"
+application:
+  port: 8080
+  host: 127.0.0.1
 email_client:
   base_url: "http://localhost"
   sender_email: "test@gmail.com"
