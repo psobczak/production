@@ -33,11 +33,6 @@ impl TryFrom<String> for SubscriberName {
         }
     }
 }
-    // #[test]
-    // fn valid_emails_are_parsed_succesfully() {
-    //     let email = SafeEmail().fake();
-    //     assert!(SubscriberEmail::parse(email).is_ok())
-    // }
 
 #[cfg(test)]
 mod tests {

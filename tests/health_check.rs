@@ -1,10 +1,13 @@
 use once_cell::sync::Lazy;
+use production::email_client::EmailClient;
 use secrecy::ExposeSecret;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
 
-use production::configuration::{get_configuration, DatabaseSettings};
-use production::telemetry;
+use production::{
+    configuration::{get_configuration, DatabaseSettings},
+    telemetry,
+};
 
 static TRACING: Lazy<()> = Lazy::new(|| {
     let default_filter_level = "info".to_string();
@@ -106,7 +109,20 @@ async fn spawn_app() -> TestApp {
 
     let connection_pool = configure_database(&configuration.database).await;
 
-    let server = production::startup::run(listener, connection_pool.clone())
+    let sender_email = configuration
+        .email_client
+        .sender()
+        .expect("Invalid sender email address");
+    let email_client = EmailClient::new(
+        configuration
+            .email_client
+            .url()
+            .expect("Failed to parse BASE URL"),
+        sender_email,
+        configuration.email_client.authorization_token,
+    );
+
+    let server = production::startup::run(listener, connection_pool.clone(), email_client)
         .expect("Failed to bind address");
 
     let _ = tokio::spawn(server);
