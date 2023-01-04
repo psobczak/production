@@ -112,6 +112,8 @@ async fn spawn_app() -> TestApp {
         .email_client
         .sender()
         .expect("Invalid sender email address");
+
+    let timeout = configuration.email_client.timeout();
     let email_client = EmailClient::new(
         configuration
             .email_client
@@ -119,6 +121,7 @@ async fn spawn_app() -> TestApp {
             .expect("Failed to parse BASE URL"),
         sender_email,
         configuration.email_client.authorization_token,
+        timeout,
     );
 
     let server = production::startup::run(listener, connection_pool.clone(), email_client)
