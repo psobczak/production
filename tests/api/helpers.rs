@@ -1,9 +1,7 @@
-use std::net::TcpListener;
-
 use once_cell::sync::Lazy;
 use production::{
-    configuration, email_client,
-    startup::{self, get_connection_pool, Application},
+    configuration,
+    startup::{get_connection_pool, Application},
     telemetry,
 };
 use sqlx::{Connection, Executor, PgConnection, PgPool};
