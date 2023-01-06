@@ -18,9 +18,9 @@ pub struct FormData {
 }
 
 #[derive(AsRefStr, Debug)]
-#[strum(serialize_all = "lowercase")]
+#[strum(serialize_all = "snake_case")]
 enum SubscriptionStatus {
-    Confirmed,
+    PendingConfirmation,
 }
 
 impl TryFrom<FormData> for NewSubscriber {
@@ -74,7 +74,7 @@ pub async fn insert_subscriber(
         new_subscriber.email.as_ref(),
         new_subscriber.name.as_ref(),
         Utc::now(),
-        SubscriptionStatus::Confirmed.as_ref()
+        SubscriptionStatus::PendingConfirmation.as_ref()
     )
     .execute(pool)
     .await
