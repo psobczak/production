@@ -2,6 +2,8 @@ use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use serde::Deserialize;
 use sqlx::PgPool;
+use std::convert::AsRef;
+use strum::AsRefStr;
 use uuid::Uuid;
 
 use crate::{
@@ -15,16 +17,10 @@ pub struct FormData {
     email: String,
 }
 
+#[derive(AsRefStr, Debug)]
+#[strum(serialize_all = "lowercase")]
 enum SubscriptionStatus {
     Confirmed,
-}
-
-impl SubscriptionStatus {
-    fn as_str(&self) -> &str {
-        match self {
-            SubscriptionStatus::Confirmed => "confirmed",
-        }
-    }
 }
 
 impl TryFrom<FormData> for NewSubscriber {
@@ -78,7 +74,7 @@ pub async fn insert_subscriber(
         new_subscriber.email.as_ref(),
         new_subscriber.name.as_ref(),
         Utc::now(),
-        SubscriptionStatus::Confirmed.as_str()
+        SubscriptionStatus::Confirmed.as_ref()
     )
     .execute(pool)
     .await
