@@ -1536,6 +1536,7 @@ name = "production"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "anyhow",
  "chrono",
  "config",
  "fake",
@@ -1552,6 +1553,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "strum",
+ "thiserror",
  "tokio",
  "tracing",
  "tracing-actix-web",

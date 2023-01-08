@@ -120,3 +120,18 @@ async fn subscriber_sends_a_confirmation_email_with_a_link() {
 
     assert_eq!(confirmation_links.html, confirmation_links.plain_text);
 }
+
+#[tokio::test]
+async fn subscribe_fails_if_there_is_a_database_error() {
+    let app = spawn_app().await;
+    let body = "name=sebastian&email=seba%40gala.com";
+
+    sqlx::query!("ALTER TABLE subscription_tokens DROP COLUMN subscription_token;")
+        .execute(&app.db_pool)
+        .await
+        .unwrap();
+
+    let respose = app.post_subscriptions(body.into()).await;
+
+    assert_eq!(respose.status(), 500)
+}
